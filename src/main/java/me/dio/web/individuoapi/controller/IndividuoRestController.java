@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestController
-@RequestMapping("/individuos")
+@RequestMapping("/api/v1/individuos")
 public class IndividuoRestController {
 
     private final IndividuoRepository repo;
@@ -33,7 +34,7 @@ public class IndividuoRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Individuo> getIndividuo(@PathVariable Long id) {
+    public ResponseEntity<Individuo> obterIndividuo(@PathVariable Long id) {
         Optional<Individuo> individuo = repo.findById(id);
 
         if (individuo.isPresent()) {
@@ -47,6 +48,15 @@ public class IndividuoRestController {
     @ResponseStatus(HttpStatus.CREATED)
     public Individuo adicionar(@RequestBody Individuo individuo) {
         return repo.save(individuo);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Individuo> atualizar(@PathVariable Long id, @RequestBody Individuo individuo) {
+        if (!repo.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(individuo);
     }
 
     @DeleteMapping("/{id}")
